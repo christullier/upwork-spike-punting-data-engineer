@@ -231,6 +231,16 @@
     return '<tr><td class="empty" colspan="' + colspan + '">' + esc(message) + "</td></tr>";
   }
 
+  function syncTableFades() {
+    document.querySelectorAll(".table-frame").forEach(function (frame) {
+      const wrap = frame.querySelector(".table-wrap");
+      if (!wrap) return;
+      const max = wrap.scrollWidth - wrap.clientWidth;
+      frame.classList.toggle("is-scrollable", max > 2);
+      frame.classList.toggle("is-at-end", max > 2 && wrap.scrollLeft >= max - 2);
+    });
+  }
+
   function shortlistTable(metricHeaders, rows, metricCells, emptyMessage) {
     const headers = ["Race", "Time", "No.", "Horse", "Barrier", "Jockey", "Trainer"].concat(metricHeaders);
     let head = "<tr>";
@@ -264,7 +274,7 @@
       });
     }
 
-    return '<div class="table-wrap"><table class="data-table shortlist-table"><thead>' + head + "</thead><tbody>" + body + "</tbody></table></div>";
+    return '<div class="table-frame"><div class="table-wrap"><table class="data-table shortlist-table"><thead>' + head + "</thead><tbody>" + body + "</tbody></table></div></div>";
   }
 
   function dropperBody(rows) {
@@ -336,7 +346,7 @@
       '<div class="card__controls">' + options.control + "</div>" +
       "</div>" +
       '<div id="' + options.id + '-table">' + options.body + "</div>" +
-      '<div class="card__foot"><span id="' + options.id + '-count"></span><span class="foot-hint">' + esc(options.hint) + '</span><span class="swipe-hint">Swipe table →</span></div>' +
+      '<div class="card__foot"><span id="' + options.id + '-count"></span><span class="foot-hint">' + esc(options.hint) + '</span></div>' +
       "</section>";
   }
 
@@ -389,6 +399,7 @@
       "</div>";
 
     updateShortlistMeta(dropperRows, hotRows, closerRows);
+    syncTableFades();
   }
 
   function updateShortlistMeta(dropperRows, hotRows, closerRows) {
@@ -406,6 +417,7 @@
     $("#closers-table").innerHTML = closersBody(closerRows);
     updateShortlistMeta(dropperRows, hotRows, closerRows);
     updateApiPanel();
+    syncTableFades();
   }
 
   /* ---------------- speed maps ---------------- */
@@ -501,7 +513,7 @@
       });
     }
 
-    return '<div class="table-wrap"><table class="data-table angles-table"><thead>' + head + "</thead><tbody>" + body + "</tbody></table></div>";
+    return '<div class="table-frame"><div class="table-wrap"><table class="data-table angles-table"><thead>' + head + "</thead><tbody>" + body + "</tbody></table></div></div>";
   }
 
   function renderAngles() {
@@ -529,12 +541,14 @@
       '<span><span class="legend-dot legend-dot--green"></span>SR ≥ 25%</span>' +
       '<span><span class="legend-dot legend-dot--gold"></span>ROI > 0</span>' +
       '<span class="foot-hint">Grey = below the minimum starts</span>' +
-      '<span class="swipe-hint">Swipe table →</span>' +
       "</div></section>";
+
+    syncTableFades();
   }
 
   function updateAnglesTable() {
     $("#anglesTableWrap").innerHTML = anglesTableHTML();
+    syncTableFades();
   }
 
   /* ---------------- runner modal ---------------- */
@@ -881,7 +895,7 @@
     chips.innerHTML = Object.keys(CFG.states).map(function (code) {
       const on = CFG.states[code];
       return '<button type="button" class="state-chip' + (on ? " is-on" : "") + '"' +
-        (on ? ' aria-pressed="true"' : ' disabled aria-pressed="false" title="enable in config.states"') +
+        (on ? ' aria-pressed="true"' : ' disabled aria-pressed="false"') +
         ">" + code + "</button>";
     }).join("");
 
@@ -953,6 +967,13 @@
       render();
       window.scrollTo({ top: 0, behavior: "smooth" });
     });
+
+    document.addEventListener("scroll", function (event) {
+      if (event.target && event.target.classList && event.target.classList.contains("table-wrap")) {
+        syncTableFades();
+      }
+    }, true);
+    window.addEventListener("resize", syncTableFades);
 
     document.addEventListener("click", function (event) {
       const runnerBtn = event.target.closest("[data-open-runner]");
