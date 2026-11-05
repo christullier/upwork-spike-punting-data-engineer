@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en-AU">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>WA Racing Shortlist · Punting Form demo</title>
+  <meta name="description" content="Mobile shortlist viewer demo for WA horse racing analytics: class droppers, KRI form lines, closing sectionals, speed maps and trainer angles.">
+  <meta name="theme-color" content="#0c5c3e">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230c5c3e'/%3E%3Ctext x='32' y='43' font-family='system-ui,sans-serif' font-size='28' font-weight='700' fill='%23fffdf9' text-anchor='middle'%3EPF%3C/text%3E%3C/svg%3E">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="sticky-head">
+    <header class="topbar">
+      <div class="brand">
+        <span class="brand__mark" aria-hidden="true">PF</span>
+        <span class="brand__text">
+          <strong>WA Racing Shortlist</strong>
+          <span>Punting Form analytics demo</span>
+        </span>
+      </div>
+      <div class="meeting-picker">
+        <label for="meetingSelect">Meeting</label>
+        <select id="meetingSelect" aria-label="Select meeting"></select>
+      </div>
+    </header>
+
+    <div class="state-bar">
+      <span class="state-bar__label">States</span>
+      <div id="stateChips" class="state-chips" role="group" aria-label="Enabled states"></div>
+      <span class="state-bar__hint">enable in <code>config.states</code></span>
+    </div>
+
+    <nav class="tabs" id="tabs" aria-label="Views">
+      <a class="tab" href="#shortlists" data-tab="shortlists">Shortlists</a>
+      <a class="tab" href="#speedmaps" data-tab="speedmaps">Speed maps</a>
+      <a class="tab" href="#angles" data-tab="angles">Angles</a>
+      <a class="tab" href="#hood" data-tab="hood">Under the hood</a>
+    </nav>
+  </div>
+
+  <main id="view"></main>
+
+  <footer class="footer">
+    <p>Demo uses fictional sample data shaped like Punting Form V2 fields. Production version: Python ETL → PostgreSQL → FastAPI.</p>
+    <p class="footer__meta">No login · no API key · static demo</p>
+  </footer>
+
+  <div class="modal" id="runnerModal" hidden>
+    <div class="modal__backdrop" data-close-modal></div>
+    <div class="modal__panel" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <button type="button" class="icon-btn icon-btn--floating" id="modalClose" data-close-modal aria-label="Close runner detail">×</button>
+      <div id="modalBody"></div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script src="data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
